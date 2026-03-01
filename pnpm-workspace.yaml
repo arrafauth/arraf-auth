@@ -1,0 +1,16 @@
+packages:
+  - packages/core
+  - packages/adapters/*
+  - packages/providers/*
+  - packages/integrations/*
+  - apps/*
+
+onlyBuiltDependencies:
+  - prisma
+  - "@prisma/client"
+  - "@prisma/engines"
+  - esbuild
+
+ignoredBuiltDependencies:
+  - sharp
+  - unrs-resolver

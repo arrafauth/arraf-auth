@@ -1,0 +1,47 @@
+{
+  "name": "@arraf-auth/hono",
+  "version": "0.1.0",
+  "description": "Hono integration for Arraf-Auth",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsup src/index.ts --format esm,cjs --dts",
+    "dev": "tsup src/index.ts --format esm,cjs --dts --watch"
+  },
+  "keywords": ["auth", "authentication", "hono", "edge", "middleware", "typescript"],
+  "author": "arraf-auth",
+  "license": "MIT",
+  "homepage": "https://github.com/arrafauth/arraf-auth",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/arrafauth/arraf-auth.git",
+    "directory": "packages/integrations/hono"
+  },
+  "bugs": {
+    "url": "https://github.com/arrafauth/arraf-auth/issues"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "sideEffects": false,
+  "packageManager": "pnpm@10.30.3",
+  "dependencies": {
+    "@arraf-auth/core": "workspace:*"
+  },
+  "peerDependencies": {
+    "hono": ">=4.0.0"
+  },
+  "devDependencies": {
+    "hono": "^4.0.0",
+    "tsup": "^8.0.0",
+    "typescript": "^5.0.0"
+  }
+}

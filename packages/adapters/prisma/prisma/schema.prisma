@@ -1,0 +1,79 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String?   @unique   // nullable — phone-only users
+  phone         String?   @unique   // nullable — email-only users
+  name          String?
+  emailVerified Boolean   @default(false)
+  phoneVerified Boolean   @default(false)
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  sessions      Session[]
+  accounts      Account[]
+
+  @@map("users")
+}
+
+model Session {
+  id          String   @id @default(cuid())
+  userId      String
+  token       String   @unique
+  expiresAt   DateTime
+  ipAddress   String?
+  userAgent   String?
+  createdAt   DateTime @default(now())
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([token])
+  @@map("sessions")
+}
+
+model Account {
+  id                   String    @id @default(cuid())
+  userId               String
+  providerId           String    // "credential", "phone", "google", "github"
+  accountId            String
+  accessToken          String?   // password hash for credentials, token for OAuth
+  refreshToken         String?
+  accessTokenExpiresAt DateTime?
+  createdAt            DateTime  @default(now())
+
+  user                 User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([providerId, accountId])
+  @@index([userId])
+  @@map("accounts")
+}
+
+model Verification {
+  id         String           @id @default(cuid())
+  identifier String           // phone number or email
+  token      String           // OTP code or email token
+  type       VerificationType
+  expiresAt  DateTime
+  attempts   Int              @default(0)
+  createdAt  DateTime         @default(now())
+
+  @@unique([identifier, type])
+  @@index([identifier])
+  @@map("verifications")
+}
+
+enum VerificationType {
+  phone_otp
+  email_otp
+  email_verification
+  password_reset
+}

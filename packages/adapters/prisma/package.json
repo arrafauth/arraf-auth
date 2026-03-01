@@ -1,0 +1,50 @@
+{
+  "name": "@arraf-auth/adapter-prisma",
+  "version": "0.1.0",
+  "description": "Prisma database adapter for Arraf-Auth",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "postinstall": "prisma generate",
+    "build": "tsup src/index.ts --format esm,cjs --dts",
+    "dev": "tsup src/index.ts --format esm,cjs --dts --watch",
+    "db:generate": "prisma generate",
+    "db:push": "prisma db push",
+    "db:migrate": "prisma migrate dev"
+  },
+  "keywords": ["auth", "authentication", "prisma", "adapter", "database", "typescript"],
+  "author": "arraf-auth",
+  "license": "MIT",
+  "homepage": "https://github.com/arrafauth/arraf-auth",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/arrafauth/arraf-auth.git",
+    "directory": "packages/adapters/prisma"
+  },
+  "bugs": {
+    "url": "https://github.com/arrafauth/arraf-auth/issues"
+  },
+  "files": [
+    "dist",
+    "prisma",
+    "README.md"
+  ],
+  "sideEffects": false,
+  "packageManager": "pnpm@10.30.3",
+  "dependencies": {
+    "@prisma/client": "^6.19.2",
+    "@arraf-auth/core": "workspace:*"
+  },
+  "devDependencies": {
+    "prisma": "^6.19.2",
+    "tsup": "^8.5.1",
+    "typescript": "^5.9.3"
+  }
+}

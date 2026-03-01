@@ -1,0 +1,48 @@
+{
+  "name": "@arraf-auth/express",
+  "version": "0.1.0",
+  "description": "Express.js integration for Arraf-Auth",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsup src/index.ts --format esm,cjs --dts",
+    "dev": "tsup src/index.ts --format esm,cjs --dts --watch"
+  },
+  "keywords": ["auth", "authentication", "express", "middleware", "typescript"],
+  "author": "arraf-auth",
+  "license": "MIT",
+  "homepage": "https://github.com/arrafauth/arraf-auth",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/arrafauth/arraf-auth.git",
+    "directory": "packages/integrations/express"
+  },
+  "bugs": {
+    "url": "https://github.com/arrafauth/arraf-auth/issues"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "sideEffects": false,
+  "packageManager": "pnpm@10.30.3",
+  "dependencies": {
+    "@arraf-auth/core": "workspace:*"
+  },
+  "peerDependencies": {
+    "express": ">=4.0.0"
+  },
+  "devDependencies": {
+    "express": "^4.18.0",
+    "@types/express": "^4.17.0",
+    "tsup": "^8.0.0",
+    "typescript": "^5.0.0"
+  }
+}

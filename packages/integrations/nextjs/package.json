@@ -1,0 +1,62 @@
+{
+  "name": "@arraf-auth/nextjs",
+  "version": "0.1.0",
+  "description": "Next.js integration for Arraf-Auth",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./client": {
+      "import": "./dist/client.mjs",
+      "require": "./dist/client.js",
+      "types": "./dist/client.d.ts"
+    },
+    "./middleware": {
+      "import": "./dist/middleware.mjs",
+      "require": "./dist/middleware.js",
+      "types": "./dist/middleware.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsup --format esm,cjs --dts",
+    "dev": "tsup --format esm,cjs --dts --watch"
+  },
+  "keywords": ["auth", "authentication", "nextjs", "react", "typescript"],
+  "author": "arraf-auth",
+  "license": "MIT",
+  "homepage": "https://github.com/arrafauth/arraf-auth",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/arrafauth/arraf-auth.git",
+    "directory": "packages/integrations/nextjs"
+  },
+  "bugs": {
+    "url": "https://github.com/arrafauth/arraf-auth/issues"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "sideEffects": false,
+  "packageManager": "pnpm@10.30.3",
+  "dependencies": {
+    "@arraf-auth/core": "workspace:*"
+  },
+  "peerDependencies": {
+    "next": ">=14.0.0",
+    "react": ">=18.0.0",
+    "react-dom": ">=18.0.0"
+  },
+  "devDependencies": {
+    "next": "^14.0.0",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
+    "tsup": "^8.0.0",
+    "typescript": "^5.0.0",
+    "@types/react": "^18.0.0"
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "name": "@arraf-auth/adapter-drizzle",
+  "version": "0.1.0",
+  "description": "Drizzle ORM database adapter for Arraf-Auth",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsup src/index.ts --format esm,cjs --dts",
+    "dev": "tsup src/index.ts --format esm,cjs --dts --watch"
+  },
+  "keywords": ["auth", "authentication", "drizzle", "adapter", "database", "typescript"],
+  "author": "arraf-auth",
+  "license": "MIT",
+  "homepage": "https://github.com/arrafauth/arraf-auth",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/arrafauth/arraf-auth.git",
+    "directory": "packages/adapters/drizzle"
+  },
+  "bugs": {
+    "url": "https://github.com/arrafauth/arraf-auth/issues"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "sideEffects": false,
+  "packageManager": "pnpm@10.30.3",
+  "dependencies": {
+    "drizzle-orm": "^0.45.1",
+    "@arraf-auth/core": "workspace:*"
+  },
+  "devDependencies": {
+    "drizzle-kit": "^0.31.9",
+    "tsup": "^8.5.1",
+    "typescript": "^5.9.3"
+  }
+}
