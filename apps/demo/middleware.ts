@@ -1,4 +1,4 @@
-import { createAuthMiddleware, defaultMatcher } from "@arraf-auth/nextjs/middleware"
+import { createAuthMiddleware } from "@arraf-auth/nextjs/middleware"
 import { auth } from "@/lib/auth"
 
 export default createAuthMiddleware({
@@ -8,4 +8,8 @@ export default createAuthMiddleware({
     redirectTo: "/login",
 })
 
-export const config = defaultMatcher
+export const config = {
+    matcher: [
+        "/((?!_next/static|_next/image|favicon.ico|.*\\.png$).*)",
+    ],
+}
