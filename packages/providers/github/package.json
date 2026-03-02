@@ -1,6 +1,6 @@
 {
   "name": "@arraf-auth/provider-github",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "GitHub OAuth provider for Arraf-Auth",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -15,7 +15,14 @@
     "build": "tsup src/index.ts --format esm,cjs --dts",
     "dev": "tsup src/index.ts --format esm,cjs --dts --watch"
   },
-  "keywords": ["auth", "authentication", "github", "oauth", "provider", "typescript"],
+  "keywords": [
+    "auth",
+    "authentication",
+    "github",
+    "oauth",
+    "provider",
+    "typescript"
+  ],
   "author": "arraf-auth",
   "license": "MIT",
   "homepage": "https://github.com/arrafauth/arraf-auth",

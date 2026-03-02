@@ -1,6 +1,6 @@
 {
   "name": "@arraf-auth/core",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "TypeScript-first authentication library built for the Saudi Arabia market",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -20,7 +20,13 @@
     "lint": "eslint src/**/*.ts",
     "clean": "rm -rf dist"
   },
-  "keywords": ["auth", "authentication", "otp", "saudi", "typescript"],
+  "keywords": [
+    "auth",
+    "authentication",
+    "otp",
+    "saudi",
+    "typescript"
+  ],
   "author": "arraf-auth",
   "license": "MIT",
   "homepage": "https://github.com/arrafauth/arraf-auth",

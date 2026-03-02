@@ -1,6 +1,6 @@
 {
   "name": "@arraf-auth/express",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Express.js integration for Arraf-Auth",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -15,7 +15,13 @@
     "build": "tsup src/index.ts --format esm,cjs --dts",
     "dev": "tsup src/index.ts --format esm,cjs --dts --watch"
   },
-  "keywords": ["auth", "authentication", "express", "middleware", "typescript"],
+  "keywords": [
+    "auth",
+    "authentication",
+    "express",
+    "middleware",
+    "typescript"
+  ],
   "author": "arraf-auth",
   "license": "MIT",
   "homepage": "https://github.com/arrafauth/arraf-auth",

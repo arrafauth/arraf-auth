@@ -1,6 +1,6 @@
 {
   "name": "@arraf-auth/adapter-prisma",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Prisma database adapter for Arraf-Auth",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -19,7 +19,14 @@
     "db:push": "prisma db push",
     "db:migrate": "prisma migrate dev"
   },
-  "keywords": ["auth", "authentication", "prisma", "adapter", "database", "typescript"],
+  "keywords": [
+    "auth",
+    "authentication",
+    "prisma",
+    "adapter",
+    "database",
+    "typescript"
+  ],
   "author": "arraf-auth",
   "license": "MIT",
   "homepage": "https://github.com/arrafauth/arraf-auth",

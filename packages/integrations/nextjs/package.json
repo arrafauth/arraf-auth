@@ -1,6 +1,6 @@
 {
   "name": "@arraf-auth/nextjs",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Next.js integration for Arraf-Auth",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -25,7 +25,13 @@
     "build": "tsup --format esm,cjs --dts",
     "dev": "tsup --format esm,cjs --dts --watch"
   },
-  "keywords": ["auth", "authentication", "nextjs", "react", "typescript"],
+  "keywords": [
+    "auth",
+    "authentication",
+    "nextjs",
+    "react",
+    "typescript"
+  ],
   "author": "arraf-auth",
   "license": "MIT",
   "homepage": "https://github.com/arrafauth/arraf-auth",

@@ -5,9 +5,23 @@ export type ArrafAuthConfig = {
     }
 }
 
+function remapPathPrefix(req: Request, from: string, to: string): Request {
+    const url = new URL(req.url)
+    const isExactMatch = url.pathname === from
+    const isNestedMatch = url.pathname.startsWith(`${from}/`)
+
+    if (!isExactMatch && !isNestedMatch) return req
+
+    const suffix = url.pathname.slice(from.length)
+    url.pathname = `${to}${suffix || ""}`
+
+    return new Request(url.toString(), req)
+}
+
 export function toNextHandlers(auth: ArrafAuthConfig["auth"]) {
     const handler = async (req: Request) => {
-        return auth.handler(req)
+        const normalizedReq = remapPathPrefix(req, "/api/auth", "/auth")
+        return auth.handler(normalizedReq)
     }
 
     return {

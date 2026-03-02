@@ -1,11 +1,10 @@
 generator client {
   provider = "prisma-client-js"
-  output   = "../node_modules/.prisma/client"
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider = "sqlite"
+  url      = "file:./dev.db"
 }
 
 model User {
@@ -18,27 +17,19 @@ model User {
   image         String?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
-
   sessions      Session[]
   accounts      Account[]
-
-  @@map("users")
 }
 
 model Session {
-  id          String   @id @default(cuid())
-  userId      String
-  token       String   @unique
-  expiresAt   DateTime
-  ipAddress   String?
-  userAgent   String?
-  createdAt   DateTime @default(now())
-
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId])
-  @@index([token])
-  @@map("sessions")
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Account {
@@ -50,31 +41,19 @@ model Account {
   refreshToken         String?
   accessTokenExpiresAt DateTime?
   createdAt            DateTime  @default(now())
-
   user                 User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([providerId, accountId])
-  @@index([userId])
-  @@map("accounts")
 }
 
 model Verification {
-  id         String           @id @default(cuid())
+  id         String   @id @default(cuid())
   identifier String
   token      String
-  type       VerificationType
+  type       String
   expiresAt  DateTime
-  attempts   Int              @default(0)
-  createdAt  DateTime         @default(now())
+  attempts   Int      @default(0)
+  createdAt  DateTime @default(now())
 
   @@unique([identifier, type])
-  @@index([identifier])
-  @@map("verifications")
-}
-
-enum VerificationType {
-  phone_otp
-  email_otp
-  email_verification
-  password_reset
 }
