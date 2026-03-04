@@ -3,6 +3,7 @@ packages:
   - packages/adapters/*
   - packages/providers/*
   - packages/integrations/*
+  - packages/cli
   - apps/*
 
 onlyBuiltDependencies:

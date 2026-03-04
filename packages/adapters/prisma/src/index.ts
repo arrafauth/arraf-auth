@@ -61,6 +61,14 @@ export function prismaAdapter(client: any): DatabaseAdapter {
             return session as Session
         },
 
+        async updateAccount(id: string, data: Partial<Account>) {
+            const account = await client.account.update({
+                where: { id },
+                data,
+            })
+            return account as Account
+        },
+
         async deleteSession(token: string): Promise<void> {
             await client.session.delete({ where: { token } }).catch(() => undefined)
         },

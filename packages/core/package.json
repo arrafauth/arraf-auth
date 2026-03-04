@@ -1,6 +1,6 @@
 {
   "name": "@arraf-auth/core",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "TypeScript-first authentication library built for the Saudi Arabia market",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

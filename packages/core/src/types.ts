@@ -47,14 +47,39 @@ export type VerificationType =
     | "email-verification"
     | "password-reset"
     | "phone-change"
+    | "forgot-password-email"
+    | "forgot-password-phone"
+    | "reset-password-email"
+    | "reset-password-phone"
 
 export interface SMSProvider {
     send(params: SMSSendParams): Promise<SMSSendResult>
 }
 
+export interface AuthCallbacks {
+    onVerifyEmail?: (params: {
+        user: User
+        email: string
+        otp?: string
+        token?: string
+        expiresAt: Date
+    }) => Promise<void>
+    onForgotPassword?: (params: {
+        user: User
+        identifier: string
+        method: "email" | "phone"
+        otp?: string
+        token?: string
+        expiresAt: Date
+    }) => Promise<void>
+    onPasswordChanged?: (params: {
+        user: User
+    }) => Promise<void>
+}
+
 export interface SMSSendParams {
     to: string
-    message: string
+    otp: string
 }
 
 export interface SMSSendResult {
@@ -69,16 +94,18 @@ export interface AuthConfig {
     session?: SessionConfig
     providers?: OAuthProvider[]
     plugins?: Plugin[]
+    callbacks?: AuthCallbacks
     sms?: SMSProvider
     otp?: OTPConfig
     trustedOrigins?: string[]
+    appName?: string
+    appUrl?: string
 }
 
 export interface OTPConfig {
     length?: number
     expiresIn?: number
     maxAttempts?: number
-    messageTemplate?: (otp: string, appName?: string) => string
 }
 
 export interface SessionConfig {
@@ -103,6 +130,7 @@ export interface DatabaseAdapter {
     createSession(data: Omit<Session, "id" | "createdAt">): Promise<Session>
     findSession(token: string): Promise<Session | null>
     updateSession(token: string, data: Partial<Session>): Promise<Session>
+    updateAccount(id: string, data: Partial<Account>): Promise<Account>
     deleteSession(token: string): Promise<void>
     deleteUserSessions(userId: string): Promise<void>
     createAccount(data: Omit<Account, "id" | "createdAt">): Promise<Account>

@@ -27,4 +27,5 @@ export type {
     OAuthTokens,
     OAuthProfile,
     RouteHandler,
+    AuthCallbacks,
 } from "./types"

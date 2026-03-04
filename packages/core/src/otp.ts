@@ -9,17 +9,6 @@ export function generateOTP(length: number = 6): string {
     return String(min + (randomBuffer[0] % range))
 }
 
-export function buildOTPMessage(
-    otp: string,
-    config?: OTPConfig,
-    appName?: string
-): string {
-    if (config?.messageTemplate) {
-        return config.messageTemplate(otp, appName)
-    }
-    return `رمز التحقق الخاص بك هو: ${otp}\nYour verification code is: ${otp}\nValid for 5 minutes. Do not share it.`
-}
-
 export async function sendOTP(params: {
     identifier: string
     type: VerificationType
@@ -44,9 +33,11 @@ export async function sendOTP(params: {
         attempts: 0,
     })
 
-    if (type === "phone-otp" && smsProvider) {
-        const message = buildOTPMessage(otp, config, appName)
-        const result = await smsProvider.send({ to: identifier, message })
+    if (
+        (type === "phone-otp" || type === "forgot-password-phone") &&
+        smsProvider
+    ) {
+        const result = await smsProvider.send({ to: identifier, otp })
         if (!result.success) {
             return { success: false, error: result.error ?? "SMS sending failed" }
         }

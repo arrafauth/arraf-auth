@@ -91,6 +91,15 @@ export function drizzleAdapter(db: DrizzleDB): DatabaseAdapter {
             return session as Session
         },
 
+        async updateAccount(id: string, data: Partial<Account>) {
+            const [account] = await db
+                .update(accounts)
+                .set(data)
+                .where(eq(accounts.id, id))
+                .returning()
+            return account as Account
+        },
+
         async deleteSession(token: string): Promise<void> {
             await db.delete(sessions).where(eq(sessions.token, token))
         },

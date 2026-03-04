@@ -1,0 +1,9 @@
+{
+    "adapter": "prisma",
+    "features": {
+        "emailVerification": true,
+        "phoneOtp": true,
+        "forgotPassword": true,
+        "oauth": true
+    }
+}
