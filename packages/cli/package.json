@@ -1,6 +1,6 @@
 {
   "name": "@arraf-auth/cli",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "A Command Line Interface for Arraf Auth to help developer execute commands — generate and migrate auth schemas.",
   "bin": {
     "arraf-auth": "./dist/index.js"
