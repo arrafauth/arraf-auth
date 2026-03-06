@@ -1,7 +1,8 @@
-import { z } from "zod"
+﻿import { z } from "zod"
 import type { AuthContext } from "../auth"
 import { normalizePhone } from "../phone"
 import { verifyOTP } from "../otp"
+import { localizeError, t } from "./i18n"
 
 const verifyOTPSchema = z.discriminatedUnion("method", [
     z.object({
@@ -24,7 +25,7 @@ export function createVerifyOTPRoute(ctx: AuthContext) {
         const parsed = verifyOTPSchema.safeParse(body)
 
         if (!parsed.success) {
-            return Response.json({ error: "Invalid input" }, { status: 400 })
+            return Response.json({ error: t("Invalid input", "مدخلات غير صالحة") }, { status: 400 })
         }
 
         let identifier: string
@@ -33,7 +34,7 @@ export function createVerifyOTPRoute(ctx: AuthContext) {
         if (parsed.data.method === "phone") {
             const normalized = normalizePhone(parsed.data.phone)
             if (!normalized.valid || !normalized.normalized) {
-                return Response.json({ error: normalized.error }, { status: 400 })
+                return Response.json({ error: localizeError(normalized.error) }, { status: 400 })
             }
             identifier = normalized.normalized
             isPhone = true
@@ -50,7 +51,7 @@ export function createVerifyOTPRoute(ctx: AuthContext) {
         })
 
         if (!result.valid) {
-            return Response.json({ error: result.error }, { status: 401 })
+            return Response.json({ error: localizeError(result.error) }, { status: 401 })
         }
 
         let user = isPhone

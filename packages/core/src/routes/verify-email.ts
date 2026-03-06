@@ -1,7 +1,8 @@
-import { z } from "zod"
+﻿import { z } from "zod"
 import type { AuthContext } from "../auth"
 import { generateOTP, verifyOTP } from "../otp"
 import { nanoid } from "nanoid"
+import { localizeError, t } from "./i18n"
 
 const sendVerifySchema = z.object({
     email: z.string().email(),
@@ -14,7 +15,7 @@ export function createSendVerifyEmailRoute(ctx: AuthContext) {
         const parsed = sendVerifySchema.safeParse(body)
 
         if (!parsed.success) {
-            return Response.json({ error: "Invalid input" }, { status: 400 })
+            return Response.json({ error: t("Invalid input", "مدخلات غير صالحة") }, { status: 400 })
         }
 
         const { email, mode } = parsed.data
@@ -25,7 +26,7 @@ export function createSendVerifyEmailRoute(ctx: AuthContext) {
         }
 
         if (user.emailVerified) {
-            return Response.json({ error: "Email already verified" }, { status: 400 })
+            return Response.json({ error: localizeError("Email already verified") }, { status: 400 })
         }
 
         const existing = await ctx.adapter.findVerification(email, "email-verification")
@@ -92,18 +93,18 @@ export function createConfirmVerifyEmailRoute(ctx: AuthContext) {
         const parsed = confirmVerifySchema.safeParse(body)
 
         if (!parsed.success) {
-            return Response.json({ error: "Invalid input" }, { status: 400 })
+            return Response.json({ error: t("Invalid input", "مدخلات غير صالحة") }, { status: 400 })
         }
 
         const { email, mode } = parsed.data
 
         const user = await ctx.adapter.findUserByEmail(email)
         if (!user) {
-            return Response.json({ error: "User not found" }, { status: 404 })
+            return Response.json({ error: localizeError("User not found") }, { status: 404 })
         }
 
         if (user.emailVerified) {
-            return Response.json({ error: "Already verified" }, { status: 400 })
+            return Response.json({ error: localizeError("Already verified") }, { status: 400 })
         }
 
         if (mode === "otp") {
@@ -116,22 +117,22 @@ export function createConfirmVerifyEmailRoute(ctx: AuthContext) {
             })
 
             if (!result.valid) {
-                return Response.json({ error: result.error }, { status: 401 })
+                return Response.json({ error: localizeError(result.error) }, { status: 401 })
             }
         } else {
             const verification = await ctx.adapter.findVerification(email, "email-verification")
 
             if (!verification) {
-                return Response.json({ error: "Invalid or expired token" }, { status: 401 })
+                return Response.json({ error: localizeError("Invalid or expired token") }, { status: 401 })
             }
 
             if (verification.expiresAt < new Date()) {
                 await ctx.adapter.deleteVerification(verification.id)
-                return Response.json({ error: "Token expired" }, { status: 401 })
+                return Response.json({ error: localizeError("Token expired") }, { status: 401 })
             }
 
             if (verification.token !== parsed.data.token) {
-                return Response.json({ error: "Invalid token" }, { status: 401 })
+                return Response.json({ error: localizeError("Invalid token") }, { status: 401 })
             }
 
             await ctx.adapter.deleteVerification(verification.id)

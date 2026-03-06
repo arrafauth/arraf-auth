@@ -1,6 +1,7 @@
-import { z } from "zod"
+﻿import { z } from "zod"
 import type { AuthContext } from "../auth"
 import { hashPassword } from "../password"
+import { localizeError, t } from "./i18n"
 
 const signUpSchema = z.object({
     email: z.string().email().optional(),
@@ -21,19 +22,22 @@ export function createSignUpRoute(ctx: AuthContext) {
         const parsed = signUpSchema.safeParse(body)
 
         if (!parsed.success) {
-            return Response.json({ error: parsed.error.flatten() }, { status: 400 })
+            return Response.json(
+                { error: t("Invalid input", "مدخلات غير صالحة"), details: parsed.error.flatten() },
+                { status: 400 }
+            )
         }
 
         const { email, phone, password, name } = parsed.data
 
         if (email) {
             const existing = await ctx.adapter.findUserByEmail(email)
-            if (existing) return Response.json({ error: "Email already in use" }, { status: 409 })
+            if (existing) return Response.json({ error: localizeError("Email already in use") }, { status: 409 })
         }
 
         if (phone) {
             const existing = await ctx.adapter.findUserByPhone(phone)
-            if (existing) return Response.json({ error: "Phone already in use" }, { status: 409 })
+            if (existing) return Response.json({ error: localizeError("Phone already in use") }, { status: 409 })
         }
 
         for (const plugin of ctx.plugins) {

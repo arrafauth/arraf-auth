@@ -1,7 +1,8 @@
-import { z } from "zod"
+﻿import { z } from "zod"
 import type { AuthContext } from "../auth"
 import { normalizePhone } from "../phone"
 import { sendOTP } from "../otp"
+import { localizeError, t } from "./i18n"
 
 const sendOTPSchema = z.discriminatedUnion("method", [
     z.object({
@@ -20,18 +21,18 @@ export function createSendOTPRoute(ctx: AuthContext) {
         const parsed = sendOTPSchema.safeParse(body)
 
         if (!parsed.success) {
-            return Response.json({ error: "Invalid input" }, { status: 400 })
+            return Response.json({ error: t("Invalid input", "مدخلات غير صالحة") }, { status: 400 })
         }
 
         if (parsed.data.method === "phone") {
             const result = normalizePhone(parsed.data.phone)
             if (!result.valid || !result.normalized) {
-                return Response.json({ error: result.error }, { status: 400 })
+                return Response.json({ error: localizeError(result.error) }, { status: 400 })
             }
 
             if (!ctx.config.sms) {
                 return Response.json(
-                    { error: "SMS provider not configured" },
+                    { error: localizeError("SMS provider not configured") },
                     { status: 500 }
                 )
             }
@@ -45,17 +46,17 @@ export function createSendOTPRoute(ctx: AuthContext) {
             })
 
             if (!sent.success) {
-                return Response.json({ error: sent.error }, { status: 500 })
+                return Response.json({ error: localizeError(sent.error) }, { status: 500 })
             }
 
             return Response.json({
                 success: true,
-                message: "OTP sent to phone",
+                message: localizeError("OTP sent to phone"),
                 maskedPhone: maskPhone(result.normalized),
             })
         }
 
-        return Response.json({ error: "Email OTP not yet configured" }, { status: 501 })
+        return Response.json({ error: localizeError("Email OTP not yet configured") }, { status: 501 })
     }
 }
 

@@ -1,5 +1,6 @@
-import type { AuthContext } from "../auth"
+﻿import type { AuthContext } from "../auth"
 import { parseCookies, serializeCookie } from "../cookies"
+import { localizeError } from "./i18n"
 
 type OAuthCallbackRequest = Request & {
     params?: {
@@ -16,12 +17,12 @@ export function createOAuthCallbackRoute(ctx: AuthContext) {
     return async (req: Request): Promise<Response> => {
         const provider = (req as OAuthCallbackRequest).params?.provider
         if (!provider) {
-            return Response.json({ error: "Provider not found" }, { status: 404 })
+            return Response.json({ error: localizeError("Provider not found") }, { status: 404 })
         }
 
         const oauthProvider = ctx.config.providers?.find((p) => p.id === provider)
         if (!oauthProvider) {
-            return Response.json({ error: "Provider not found" }, { status: 404 })
+            return Response.json({ error: localizeError("Provider not found") }, { status: 404 })
         }
 
         const url = new URL(req.url)
@@ -30,11 +31,11 @@ export function createOAuthCallbackRoute(ctx: AuthContext) {
         const error = url.searchParams.get("error")
 
         if (error) {
-            return Response.json({ error: `OAuth denied: ${error}` }, { status: 400 })
+            return Response.json({ error: localizeError(`OAuth denied: ${error}`) }, { status: 400 })
         }
 
         if (!code || !state) {
-            return Response.json({ error: "Missing code or state" }, { status: 400 })
+            return Response.json({ error: localizeError("Missing code or state") }, { status: 400 })
         }
 
         const cookies = parseCookies(req.headers.get("cookie") ?? "")
@@ -42,25 +43,25 @@ export function createOAuthCallbackRoute(ctx: AuthContext) {
         const codeVerifier = cookies["oauth_verifier"]
 
         if (!savedState || savedState !== state) {
-            return Response.json({ error: "Invalid state - possible CSRF attack" }, { status: 400 })
+            return Response.json({ error: localizeError("Invalid state - possible CSRF attack") }, { status: 400 })
         }
 
         let tokens
         try {
             tokens = await oauthProvider.exchangeCode(code, codeVerifier)
         } catch (error: unknown) {
-            return Response.json({ error: getErrorMessage(error) }, { status: 400 })
+            return Response.json({ error: localizeError(getErrorMessage(error)) }, { status: 400 })
         }
 
         let profile
         try {
             profile = await oauthProvider.getUserProfile(tokens.accessToken)
         } catch (error: unknown) {
-            return Response.json({ error: getErrorMessage(error) }, { status: 400 })
+            return Response.json({ error: localizeError(getErrorMessage(error)) }, { status: 400 })
         }
 
         if (!profile.email) {
-            return Response.json({ error: "Provider did not return an email" }, { status: 400 })
+            return Response.json({ error: localizeError("Provider did not return an email") }, { status: 400 })
         }
 
         let user = await ctx.adapter.findUserByEmail(profile.email)

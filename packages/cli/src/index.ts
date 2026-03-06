@@ -2,6 +2,7 @@ import { Command } from "commander"
 import { generate } from "./commands/generate"
 import { migrate } from "./commands/migrate"
 import packageJson from "../package.json" assert { type: "json" }
+import { generateSecretHash } from "./commands/secret";
 
 const version = packageJson.version;
 const RTL_EMBED = '\u202B'
@@ -67,6 +68,27 @@ program
     })
 
 program
+    .command("secret")
+    .alias("s")
+    .description(
+        bil(
+            "Generating a secret key for your authentication",
+            "يتم إنشاء مفتاح سري الخاص بمشروعك للمصادقة"
+        )
+    )
+    .action(() => {
+        const secret = generateSecretHash();
+
+        console.log(`
+Add the following to your .env file:
+قم بإضافة المفتاح السري في ملف .env الخاص بك :
+
+# Auth Secret
+AUTH_SECRET=${secret}
+`);
+    });
+
+program
     .command("help")
     .alias("h")
     .description(bil("Show help", "عرض المساعدة"))
@@ -79,6 +101,7 @@ program.addHelpText('after', `
 📋 ${bil("Available Commands:", "الأوامر المتاحة:")}
    ${' '.repeat(2)}${bil("generate, g", "إنشاء, g")}    ${bil("- Generate auth schema", "- إنشاء مخطط المصادقة")}
    ${' '.repeat(2)}${bil("migrate, m", "ترحيل, m")}     ${bil("- Apply schema to database", "- تطبيق المخطط على قاعدة البيانات")}
+   ${' '.repeat(2)}${bil("secret, s", "مفتاح, s")}     ${bil("- Generate secret key", "- إنشاء مفتاح سري للمصادقة")}
    ${' '.repeat(2)}${bil("help, h", "مساعدة, h")}       ${bil("- Show this help", "- عرض هذه المساعدة")}
 
 📌 ${bil("Examples:", "أمثلة:")}

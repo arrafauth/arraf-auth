@@ -1,8 +1,9 @@
-import { z } from "zod"
+﻿import { z } from "zod"
 import type { AuthContext } from "../auth"
 import { normalizePhone } from "../phone"
 import { generateOTP } from "../otp"
 import { nanoid } from "nanoid"
+import { localizeError, t } from "./i18n"
 
 const forgotPasswordSchema = z.discriminatedUnion("method", [
     z.object({
@@ -22,13 +23,13 @@ export function createForgotPasswordRoute(ctx: AuthContext) {
         const parsed = forgotPasswordSchema.safeParse(body)
 
         if (!parsed.success) {
-            return Response.json({ error: "Invalid input" }, { status: 400 })
+            return Response.json({ error: t("Invalid input", "مدخلات غير صالحة") }, { status: 400 })
         }
 
         if (parsed.data.method === "phone") {
             const normalized = normalizePhone(parsed.data.phone)
             if (!normalized.valid || !normalized.normalized) {
-                return Response.json({ error: normalized.error }, { status: 400 })
+                return Response.json({ error: localizeError(normalized.error) }, { status: 400 })
             }
 
             const phone = normalized.normalized
@@ -39,7 +40,9 @@ export function createForgotPasswordRoute(ctx: AuthContext) {
             const account = await ctx.adapter.findAccount("credential", user.id)
             if (!account) {
                 return Response.json(
-                    { error: "This account uses OTP sign-in. No password to reset." },
+                    {
+                        error: localizeError("This account uses OTP sign-in. No password to reset."),
+                    },
                     { status: 400 }
                 )
             }
@@ -83,7 +86,7 @@ export function createForgotPasswordRoute(ctx: AuthContext) {
         const account = await ctx.adapter.findAccount("credential", user.id)
         if (!account) {
             return Response.json(
-                { error: "This account uses social sign-in. No password to reset." },
+                { error: localizeError("This account uses social sign-in. No password to reset.") },
                 { status: 400 }
             )
         }

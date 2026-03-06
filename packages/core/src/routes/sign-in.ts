@@ -1,7 +1,8 @@
-import { z } from "zod"
+﻿import { z } from "zod"
 import type { AuthContext } from "../auth"
 import { verifyPassword } from "../password"
 import { normalizePhone } from "../phone"
+import { localizeError, t } from "./i18n"
 
 const signInSchema = z.discriminatedUnion("method", [
     z.object({
@@ -21,33 +22,33 @@ export function createSignInRoute(ctx: AuthContext) {
         const parsed = signInSchema.safeParse(body)
 
         if (!parsed.success) {
-            return Response.json({ error: "Invalid input" }, { status: 400 })
+            return Response.json({ error: t("Invalid input", "مدخلات غير صالحة") }, { status: 400 })
         }
 
         if (parsed.data.method === "phone") {
             const normalized = normalizePhone(parsed.data.phone)
             if (!normalized.valid) {
-                return Response.json({ error: normalized.error }, { status: 400 })
+                return Response.json({ error: localizeError(normalized.error) }, { status: 400 })
             }
             return Response.json({
                 nextStep: "otp",
-                message: "Please verify your phone number with OTP",
+                message: localizeError("Please verify your phone number with OTP"),
             })
         }
 
         const user = await ctx.adapter.findUserByEmail(parsed.data.email)
         if (!user) {
-            return Response.json({ error: "Invalid credentials" }, { status: 401 })
+            return Response.json({ error: localizeError("Invalid credentials") }, { status: 401 })
         }
 
         const account = await ctx.adapter.findAccount("credential", user.id)
         if (!account?.accessToken) {
-            return Response.json({ error: "Invalid credentials" }, { status: 401 })
+            return Response.json({ error: localizeError("Invalid credentials") }, { status: 401 })
         }
 
         const valid = await verifyPassword(parsed.data.password, account.accessToken)
         if (!valid) {
-            return Response.json({ error: "Invalid credentials" }, { status: 401 })
+            return Response.json({ error: localizeError("Invalid credentials") }, { status: 401 })
         }
 
         for (const plugin of ctx.plugins) {

@@ -1,7 +1,8 @@
-import { z } from "zod"
+﻿import { z } from "zod"
 import type { AuthContext } from "../auth"
 import { normalizePhone } from "../phone"
 import { hashPassword } from "../password"
+import { localizeError, t } from "./i18n"
 
 const resetPasswordSchema = z.discriminatedUnion("method", [
     z.object({
@@ -28,13 +29,16 @@ export function createResetPasswordRoute(ctx: AuthContext) {
         const parsed = resetPasswordSchema.safeParse(body)
 
         if (!parsed.success) {
-            return Response.json({ error: parsed.error.flatten() }, { status: 400 })
+            return Response.json(
+                { error: t("Invalid input", "مدخلات غير صالحة"), details: parsed.error.flatten() },
+                { status: 400 }
+            )
         }
 
         if (parsed.data.method === "phone") {
             const normalized = normalizePhone(parsed.data.phone)
             if (!normalized.valid || !normalized.normalized) {
-                return Response.json({ error: normalized.error }, { status: 400 })
+                return Response.json({ error: localizeError(normalized.error) }, { status: 400 })
             }
 
             const phone = normalized.normalized
@@ -43,14 +47,14 @@ export function createResetPasswordRoute(ctx: AuthContext) {
 
             if (!verification) {
                 return Response.json(
-                    { error: "No reset request found. Please request a new code." },
+                    { error: localizeError("No reset request found. Please request a new code.") },
                     { status: 401 }
                 )
             }
 
             if (verification.expiresAt < new Date()) {
                 await ctx.adapter.deleteVerification(verification.id)
-                return Response.json({ error: "Code expired." }, { status: 401 })
+                return Response.json({ error: localizeError("Code expired.") }, { status: 401 })
             }
 
             const maxAttempts = ctx.config.otp?.maxAttempts ?? 5
@@ -58,7 +62,7 @@ export function createResetPasswordRoute(ctx: AuthContext) {
             if (verification.attempts >= maxAttempts) {
                 await ctx.adapter.deleteVerification(verification.id)
                 return Response.json(
-                    { error: "Too many attempts. Request a new code." },
+                    { error: localizeError("Too many attempts. Request a new code.") },
                     { status: 401 }
                 )
             }
@@ -69,7 +73,7 @@ export function createResetPasswordRoute(ctx: AuthContext) {
                 })
                 const remaining = maxAttempts - verification.attempts - 1
                 return Response.json(
-                    { error: `Invalid code. ${remaining} attempts remaining.` },
+                    { error: localizeError(`Invalid code. ${remaining} attempts remaining.`) },
                     { status: 401 }
                 )
             }
@@ -78,7 +82,7 @@ export function createResetPasswordRoute(ctx: AuthContext) {
 
             const user = await ctx.adapter.findUserByPhone(phone)
             if (!user) {
-                return Response.json({ error: "User not found" }, { status: 404 })
+                return Response.json({ error: localizeError("User not found") }, { status: 404 })
             }
 
             const newHash = await hashPassword(parsed.data.newPassword)
@@ -110,14 +114,14 @@ export function createResetPasswordRoute(ctx: AuthContext) {
 
         if (!verification) {
             return Response.json(
-                { error: "No reset request found. Please request a new one." },
+                { error: localizeError("No reset request found. Please request a new one.") },
                 { status: 401 }
             )
         }
 
         if (verification.expiresAt < new Date()) {
             await ctx.adapter.deleteVerification(verification.id)
-            return Response.json({ error: "Reset request expired." }, { status: 401 })
+            return Response.json({ error: localizeError("Reset request expired.") }, { status: 401 })
         }
 
         if (parsed.data.otp) {
@@ -126,7 +130,7 @@ export function createResetPasswordRoute(ctx: AuthContext) {
             if (verification.attempts >= maxAttempts) {
                 await ctx.adapter.deleteVerification(verification.id)
                 return Response.json(
-                    { error: "Too many attempts. Request a new code." },
+                    { error: localizeError("Too many attempts. Request a new code.") },
                     { status: 401 }
                 )
             }
@@ -137,7 +141,7 @@ export function createResetPasswordRoute(ctx: AuthContext) {
                 })
                 const remaining = maxAttempts - verification.attempts - 1
                 return Response.json(
-                    { error: `Invalid code. ${remaining} attempts remaining.` },
+                    { error: localizeError(`Invalid code. ${remaining} attempts remaining.`) },
                     { status: 401 }
                 )
             }
@@ -145,7 +149,7 @@ export function createResetPasswordRoute(ctx: AuthContext) {
 
         if (parsed.data.token) {
             if (verification.token !== parsed.data.token) {
-                return Response.json({ error: "Invalid reset token" }, { status: 401 })
+                return Response.json({ error: localizeError("Invalid reset token") }, { status: 401 })
             }
         }
 
@@ -153,7 +157,7 @@ export function createResetPasswordRoute(ctx: AuthContext) {
 
         const user = await ctx.adapter.findUserByEmail(email)
         if (!user) {
-            return Response.json({ error: "User not found" }, { status: 404 })
+            return Response.json({ error: localizeError("User not found") }, { status: 404 })
         }
 
         const newHash = await hashPassword(newPassword)

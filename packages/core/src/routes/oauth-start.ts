@@ -1,10 +1,11 @@
-import type { AuthContext } from "../auth"
+﻿import type { AuthContext } from "../auth"
 import {
     generateState,
     generateCodeVerifier,
     generateCodeChallenge,
 } from "../oauth"
 import { serializeCookie } from "../cookies"
+import { localizeError } from "./i18n"
 
 export function createOAuthStartRoute(ctx: AuthContext) {
     return async (req: Request): Promise<Response> => {
@@ -12,7 +13,7 @@ export function createOAuthStartRoute(ctx: AuthContext) {
         const oauthProvider = ctx.config.providers?.find((p) => p.id === provider)
 
         if (!oauthProvider) {
-            return Response.json({ error: `Provider "${provider}" not configured` }, { status: 404 })
+            return Response.json({ error: localizeError(`Provider "${provider}" not configured`) }, { status: 404 })
         }
 
         const state = generateState()
@@ -35,12 +36,14 @@ export function createOAuthStartRoute(ctx: AuthContext) {
 
         const authUrl = oauthProvider.getAuthorizationUrl(state, codeChallenge)
 
+        const headers = new Headers()
+        headers.append("Location", authUrl)
+        headers.append("Set-Cookie", stateCookie)
+        headers.append("Set-Cookie", verifierCookie)
+
         return new Response(null, {
             status: 302,
-            headers: {
-                Location: authUrl,
-                "Set-Cookie": stateCookie,
-            },
+            headers,
         })
     }
 }
