@@ -1,7 +1,8 @@
 [changelog]
 header = ""
 body = """
-## {{ version }} — {{ timestamp | date(format="%B %d, %Y") }}
+## {{ version }}{% if timestamp %} — {{ timestamp | date(format="%B %d, %Y") }}{% endif %}
+
 {% for group, commits in commits | group_by(attribute="group") %}
 ### {{ group }}
 {% for commit in commits %}
