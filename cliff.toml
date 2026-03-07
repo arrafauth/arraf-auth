@@ -1,0 +1,38 @@
+[changelog]
+header = ""
+body = """
+## {{ version }} — {{ timestamp | date(format="%B %d, %Y") }}
+{% for group, commits in commits | group_by(attribute="group") %}
+### {{ group }}
+{% for commit in commits %}
+- {{ commit.message | upper_first }} ([`{{ commit.id | truncate(length=7, end="") }}`](https://github.com/{{ remote.github.owner }}/{{ remote.github.repo }}/commit/{{ commit.id }}))
+{%- endfor %}
+{% endfor %}
+"""
+trim = true
+footer = ""
+
+[git]
+conventional_commits = true
+filter_unconventional = true
+split_commits = false
+commit_preprocessors = []
+commit_parsers = [
+  { message = "^feat", group = "✨ Features" },
+  { message = "^fix", group = "🐛 Bug Fixes" },
+  { message = "^perf", group = "⚡ Performance" },
+  { message = "^refactor", group = "♻️ Refactor" },
+  { message = "^docs", group = "📖 Documentation" },
+  { message = "^chore\\(release\\)", skip = true },
+  { message = "^chore: update changelog", skip = true },
+  { message = "^chore", group = "🔧 Chores" },
+  { message = "^breaking", group = "💥 Breaking Changes" },
+  { body = ".*security", group = "🔒 Security" },
+]
+protect_breaking_commits = false
+filter_commits = false
+tag_pattern = "v[0-9]*"
+skip_tags = ""
+ignore_tags = ""
+topo_order = false
+sort_commits = "oldest"
